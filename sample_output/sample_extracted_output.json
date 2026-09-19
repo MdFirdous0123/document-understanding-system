@@ -1,0 +1,155 @@
+{
+  "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+  "original_filename": "physics_exam_2024.pdf",
+  "status": "completed",
+  "document_role": "mixed",
+  "page_count": 4,
+  "extraction_summary": {
+    "total_questions": 6,
+    "answered": 4,
+    "unanswered": 2,
+    "high_confidence": 4,
+    "needs_review": 1,
+    "failed": 1
+  },
+  "questions": [
+    {
+      "id": "q-001",
+      "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+      "question_number": "1",
+      "question_text": "Which of the following best describes Newton's First Law of Motion?",
+      "question_type": "mcq",
+      "options": [
+        {"label": "A", "text": "An object at rest stays at rest unless acted upon by an external force"},
+        {"label": "B", "text": "Force equals mass times acceleration"},
+        {"label": "C", "text": "For every action there is an equal and opposite reaction"},
+        {"label": "D", "text": "Energy can neither be created nor destroyed"}
+      ],
+      "has_image": false,
+      "has_table": false,
+      "answer": "A",
+      "answer_source": "same_document",
+      "answer_confidence": 0.97,
+      "confidence": 0.98,
+      "review_status": "ok",
+      "source_pages": [1],
+      "extraction_warnings": []
+    },
+    {
+      "id": "q-002",
+      "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+      "question_number": "2",
+      "question_text": "A ball is thrown vertically upward with an initial velocity of 20 m/s. Calculate the maximum height reached. (g = 10 m/s²)",
+      "question_type": "mcq",
+      "options": [
+        {"label": "A", "text": "10 m"},
+        {"label": "B", "text": "20 m"},
+        {"label": "C", "text": "40 m"},
+        {"label": "D", "text": "5 m"}
+      ],
+      "has_image": false,
+      "has_table": false,
+      "answer": "B",
+      "answer_source": "same_document",
+      "answer_confidence": 0.94,
+      "confidence": 0.96,
+      "review_status": "ok",
+      "source_pages": [1],
+      "extraction_warnings": []
+    },
+    {
+      "id": "q-003",
+      "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+      "question_number": "3",
+      "question_text": "Refer to the circuit diagram shown in Figure 3.1. Calculate the total resistance in the parallel combination if R1 = 4Ω, R2 = 6Ω, and R3 = 12Ω.",
+      "question_type": "short_answer",
+      "options": [],
+      "has_image": true,
+      "has_table": false,
+      "answer": "2Ω",
+      "answer_source": "same_document",
+      "answer_confidence": 0.88,
+      "confidence": 0.87,
+      "review_status": "ok",
+      "source_pages": [2],
+      "extraction_warnings": ["Question references Figure 3.1 — image not extractable, visual review recommended"]
+    },
+    {
+      "id": "q-004",
+      "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+      "question_number": "4",
+      "question_text": "The following table shows velocity of a particle at different time intervals. Using the data, draw a velocity-time graph and determine the acceleration. (Question continues on page 3)",
+      "question_type": "long_answer",
+      "options": [],
+      "has_image": false,
+      "has_table": true,
+      "answer": null,
+      "answer_source": "unmatched",
+      "answer_confidence": 0.0,
+      "confidence": 0.78,
+      "review_status": "ok",
+      "source_pages": [2, 3],
+      "extraction_warnings": [
+        "Question spans pages 2 and 3",
+        "Embedded data table detected — tabular data preserved in question_text"
+      ]
+    },
+    {
+      "id": "q-005",
+      "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+      "question_number": "5",
+      "question_text": "The speed of light in vacuum is approximately 3 × 10⁸ m/s. True or False?",
+      "question_type": "true_false",
+      "options": [
+        {"label": "A", "text": "True"},
+        {"label": "B", "text": "False"}
+      ],
+      "has_image": false,
+      "has_table": false,
+      "answer": "True",
+      "answer_source": "same_document",
+      "answer_confidence": 0.99,
+      "confidence": 0.99,
+      "review_status": "ok",
+      "source_pages": [3],
+      "extraction_warnings": []
+    },
+    {
+      "id": "q-006",
+      "document_id": "3f5a8d21-1234-4abc-b789-000000000001",
+      "question_number": null,
+      "question_text": "[Partial extraction] The process by which ener... [text unclear due to scan quality — manual review required]",
+      "question_type": "unknown",
+      "options": [],
+      "has_image": false,
+      "has_table": false,
+      "answer": null,
+      "answer_source": "unknown",
+      "answer_confidence": 0.0,
+      "confidence": 0.32,
+      "review_status": "failed",
+      "source_pages": [3],
+      "extraction_warnings": [
+        "Low scan quality on page 3 — text partially illegible",
+        "Question number not detected",
+        "Text appears truncated — likely incomplete extraction"
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "id": "w-001",
+      "page_number": 3,
+      "warning_type": "low_quality",
+      "message": "Page 3 is a low-resolution scan. Some text may be inaccurately extracted. Confidence reduced.",
+      "severity": "warning"
+    },
+    {
+      "id": "w-002",
+      "page_number": null,
+      "warning_type": "low_confidence",
+      "message": "Question 'N/A' extracted with confidence 0.32 — marked for human review",
+      "severity": "error"
+    }
+  ]
+}

@@ -1,0 +1,435 @@
+{
+  "info": {
+    "_postman_id": "dociq-collection-v1-0",
+    "name": "DocIQ — Document Intelligence Service",
+    "description": "Complete API workflow for DocIQ.\n\n## Setup\n1. Start services: `docker-compose up -d`\n2. Run migrations: `docker-compose exec api alembic upgrade head`\n3. Import this collection in Postman\n4. Run requests in order — Login auto-saves the token\n\nBase URL: http://localhost:8000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8000", "type": "string"},
+    {"key": "token", "value": "", "type": "string"},
+    {"key": "document_id", "value": "", "type": "string"},
+    {"key": "question_id", "value": "", "type": "string"},
+    {"key": "group_id", "value": "", "type": "string"}
+  ],
+  "item": [
+    {
+      "name": "1. Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"]}
+          }
+        },
+        {
+          "name": "Root / Service Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{base_url}}/", "host": ["{{base_url}}"], "path": [""]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@dociq.com\",\n  \"password\": \"SecurePass123!\",\n  \"full_name\": \"Demo User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login (saves token automatically)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set('token', data.access_token);",
+                  "  console.log('✅ Token saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/x-www-form-urlencoded"}],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key": "username", "value": "demo@dociq.com"},
+                {"key": "password", "value": "SecurePass123!"}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Document Groups",
+      "item": [
+        {
+          "name": "Create Group (Q-Paper + Answer Key)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('group_id', pm.response.json().id);",
+                  "  console.log('✅ Group ID saved: ' + pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Physics Exam 2024\",\n  \"description\": \"Question paper + answer key bundle\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/groups/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "groups", ""]
+            }
+          }
+        },
+        {
+          "name": "List Groups",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/groups/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "groups", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Group Documents",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/groups/{{group_id}}/documents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "groups", "{{group_id}}", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Trigger Answer Linking",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/groups/{{group_id}}/link-answers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "groups", "{{group_id}}", "link-answers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Documents",
+      "item": [
+        {
+          "name": "Upload PDF (Question Paper)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 202) {",
+                  "  pm.collectionVariables.set('document_id', pm.response.json().document_id);",
+                  "  console.log('✅ Document ID saved: ' + pm.response.json().document_id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "./sample_docs/sample_exam.pdf",
+                  "description": "Replace with your actual PDF path"
+                },
+                {"key": "document_role", "value": "question_paper", "type": "text"},
+                {"key": "group_id", "value": "{{group_id}}", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "upload"]
+            }
+          }
+        },
+        {
+          "name": "Upload Image (PNG/JPG)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "./sample_docs/sample_page.png",
+                  "description": "Replace with your actual image path"
+                },
+                {"key": "document_role", "value": "question_paper", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "upload"]
+            }
+          }
+        },
+        {
+          "name": "Upload Answer Key PDF (to group)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "./sample_docs/answer_key.pdf"
+                },
+                {"key": "document_role", "value": "answer_key", "type": "text"},
+                {"key": "group_id", "value": "{{group_id}}", "type": "text"}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "upload"]
+            }
+          }
+        },
+        {
+          "name": "Upload INVALID Type (demonstrates error handling)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "./requirements.txt",
+                  "description": "This .txt file will be rejected with HTTP 400"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "upload"]
+            }
+          }
+        },
+        {
+          "name": "List All My Documents",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", ""]
+            }
+          }
+        },
+        {
+          "name": "Check Processing Status",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Document",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Questions",
+      "item": [
+        {
+          "name": "Get All Questions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const q = pm.response.json().questions;",
+                  "  if (q && q.length > 0) {",
+                  "    pm.collectionVariables.set('question_id', q[0].id);",
+                  "    console.log('✅ Question ID saved');",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/questions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}", "questions"]
+            }
+          }
+        },
+        {
+          "name": "Get High Confidence Questions (>=0.8)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/questions?min_confidence=0.8",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}", "questions"],
+              "query": [{"key": "min_confidence", "value": "0.8"}]
+            }
+          }
+        },
+        {
+          "name": "Get Questions Needing Review",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/questions?review_status=needs_review",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}", "questions"],
+              "query": [{"key": "review_status", "value": "needs_review"}]
+            }
+          }
+        },
+        {
+          "name": "Get Failed/Low-Confidence Questions",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/questions?review_status=failed",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}", "questions"],
+              "query": [{"key": "review_status", "value": "failed"}]
+            }
+          }
+        },
+        {
+          "name": "Get Single Question Detail",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/questions/{{question_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "questions", "{{question_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Answer Key Info",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/answers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}", "answers"]
+            }
+          }
+        },
+        {
+          "name": "Get Extraction Warnings",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{document_id}}/warnings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{document_id}}", "warnings"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
